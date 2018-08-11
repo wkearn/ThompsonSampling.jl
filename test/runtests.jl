@@ -1,4 +1,4 @@
-include("thompson.jl")
+using ThompsonSampling, Base.Test
 
 x = linspace(0,2pi,100)
 y = linspace(0,2pi,100)
