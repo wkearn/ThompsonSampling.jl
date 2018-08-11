@@ -33,7 +33,7 @@ function step(t::ThompsonSampler)
     Y = t.Y
 
     gp = GP(X,Y,MeanZero(),SE(zeros(size(X,1)),0.0),-1.0)
-    optimize!(gp)
+    optimize!(gp,iterations=1)
 
     f,g = spectral_sample(gp,t.M)
 
