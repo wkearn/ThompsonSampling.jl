@@ -1,5 +1,7 @@
 module ThompsonSampling
 
-# package code goes here
+export ThompsonSampler
+
+include("thompson.jl")
 
 end # module
