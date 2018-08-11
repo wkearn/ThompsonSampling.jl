@@ -40,7 +40,7 @@ function step(t::ThompsonSampler)
     # Start from our best maximum point
     x0 = X[:,findmax(Y)[2]]
 
-    β = optimize(f,g,x0,t.lower,t.upper,Fminbox())
+    β = optimize(f,g,t.lower,t.upper,x0,Fminbox())
     Optim.minimizer(β)
 end
 
