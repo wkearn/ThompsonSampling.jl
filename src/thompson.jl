@@ -10,37 +10,44 @@ mutable struct ThompsonSampler
     M
     lower
     upper
+    ll
+    lσ
+    logNoise
+    gp_iter
+    x0
 end
 
-ThompsonSampler(f,X,Y,M) = ThompsonSampler(f,
-                                           size(X,1),
-                                           X,
-                                           Y,                                          
-                                           M,
-                                           fill(-Inf,size(X,1)),
-                                           fill(Inf,size(Y,1)))
-
-ThompsonSampler(f,X,Y,M,lower,upper) = ThompsonSampler(f,
-                                                       size(X,1),
-                                                       X,
-                                                       Y,                                                      
-                                                       M,
-                                                       lower,
-                                                       upper)
+ThompsonSampler(f,X,Y,M,
+                lower=fill(-Inf,size(X,1)),
+                upper=fill(Inf,size(Y,1)),
+                ll=zeros(size(X,1)),
+                lσ=0.0,
+                logNoise=-1.0,
+                gp_iter=1,
+                x0=X[:,findmax(Y)[2]]) = ThompsonSampler(f,
+                                                         size(X,1),
+                                                         X,
+                                                         Y,                        
+                                                         M,
+                                                         fill(-Inf,size(X,1)),
+                                                         fill(Inf,size(Y,1))
+                                                         ll,
+                                                         lσ,
+                                                         logNoise,
+                                                         gp_iter,
+                                                         x0)
 
 function step(t::ThompsonSampler)
+    
     X = t.X
     Y = t.Y
 
-    gp = GP(X,Y,MeanZero(),SE(zeros(size(X,1)),0.0),-1.0)
-    optimize!(gp,iterations=1)
+    gp = GP(X,Y,MeanZero(),SE(t.ll,t.lσ),t.logNoise)
+    optimize!(gp,iterations=t.gp_iter)
 
     f,g = spectral_sample(gp,t.M)
 
-    # Start from our best maximum point
-    x0 = X[:,findmax(Y)[2]]
-
-    β = optimize(f,g,t.lower,t.upper,x0,Fminbox())
+    β = optimize(f,g,t.lower,t.upper,t.x0,Fminbox())
     Optim.minimizer(β)
 end
 
