@@ -30,7 +30,7 @@ ThompsonSampler(f,X,Y,M,
                                                          Y,                        
                                                          M,
                                                          fill(-Inf,size(X,1)),
-                                                         fill(Inf,size(Y,1))
+                                                         fill(Inf,size(Y,1)),
                                                          ll,
                                                          lσ,
                                                          logNoise,
